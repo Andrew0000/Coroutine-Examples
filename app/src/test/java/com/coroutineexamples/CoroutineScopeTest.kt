@@ -5,6 +5,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import kotlin.test.Test
@@ -58,6 +59,36 @@ class CoroutineScopeTest {
                 }
             }
         }
+    }
+
+    @Test
+    fun `When exception in launch with ExceptionHandler and additional supervisorScope - coroutineScope continues`() = runTest {
+        val result = mutableListOf<Int>()
+        val handler = CoroutineExceptionHandler { _, exception ->
+            result += 3
+            println("handler: $exception")
+        }
+        withContext(handler) {
+            coroutineScope {
+                supervisorScope {
+                    result += 1
+                    launch {
+                        delay(100)
+                        result += 2
+                        throw TheSampleException()
+                    }
+                    launch {
+                        delay(200)
+                        result += 4
+                    }
+                }
+            }
+            result += 5
+        }
+        assertEquals(
+            listOf(1, 2, 3, 4, 5),
+            result
+        )
     }
 
     @Test(expected = TheSampleException::class)
