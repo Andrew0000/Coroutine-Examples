@@ -2,6 +2,7 @@ package com.coroutineexamples
 
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -87,7 +88,7 @@ class CoroutineScopeTest {
     }
 
     @Test
-    fun `When exception in launch with ExceptionHandler and additional supervisorScope - coroutineScope continues`() = runTest {
+    fun `When exception in launch + withContext + ExceptionHandler + supervisorScope - coroutineScope continues`() = runTest {
         val result = mutableListOf<Int>()
         val handler = CoroutineExceptionHandler { _, exception ->
             result += 3
@@ -120,6 +121,16 @@ class CoroutineScopeTest {
     fun `When exception is thrown in async - coroutineScope crashes`() = runTest {
         coroutineScope {
             async {
+                delay(100)
+                throw TheSampleException()
+            }
+        }
+    }
+
+    @Test
+    fun `When exception is thrown in async + SupervisorJob - coroutineScope doesn't crash`() = runTest {
+        coroutineScope {
+            async(SupervisorJob()) {
                 delay(100)
                 throw TheSampleException()
             }
