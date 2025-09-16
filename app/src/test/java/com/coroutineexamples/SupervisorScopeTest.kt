@@ -92,4 +92,15 @@ class SupervisorScopeTest {
         )
     }
 
+    @Test(expected = TheSampleException::class)
+    fun `When exception is thrown in async and result awaited - supervisorScope crashes`() = runTest {
+        supervisorScope {
+            val deferred = async<Int> {
+                delay(100)
+                throw TheSampleException()
+            }
+            deferred.await()
+        }
+    }
+
 }
