@@ -1,6 +1,7 @@
 package com.coroutineexamples
 
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -47,7 +48,7 @@ class CoroutineScopeTest {
     }
 
     @Test(expected = TheSampleException::class)
-    fun `When exception is thrown in launch with ExceptionHandler - coroutineScope crashes`() = runTest {
+    fun `When exception is thrown in launch + withContext + ExceptionHandler - coroutineScope crashes`() = runTest {
         val handler = CoroutineExceptionHandler { _, exception ->
             println("handler: $exception")
         }
@@ -59,6 +60,30 @@ class CoroutineScopeTest {
                 }
             }
         }
+    }
+
+    @Test
+    fun `When exception is thrown in launch + Job + ExceptionHandler - coroutineScope continues`() = runTest {
+        val result = mutableListOf<Int>()
+        val handler = CoroutineExceptionHandler { _, exception ->
+            result += 2
+        }
+        coroutineScope {
+            // Crete a new Job() to avoid being a child of the parent Job
+            launch(Job() + handler) {
+                delay(100)
+                result += 1
+                throw TheSampleException()
+            }
+            launch {
+                delay(200)
+                result += 3
+            }
+        }
+        assertEquals(
+            listOf(1, 2, 3),
+            result
+        )
     }
 
     @Test
