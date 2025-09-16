@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
 class SupervisorScopeTest {
 
     @Test
-    fun `When inner coroutines finish - supervisorScope exits`() = runTest {
+    fun `When inner coroutines finish - only then supervisorScope exits`() = runTest {
         val result = mutableListOf<Int>()
         result += 1
         supervisorScope {
