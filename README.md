@@ -30,7 +30,8 @@ Use `runCatching` or simple `try/catch` for suspendable code
 ```
 launch {
     runCatching {
-        // Some suspendable code
+        // Some suspendable code.
+        // For example, a network request.
     }
 }
 ```
