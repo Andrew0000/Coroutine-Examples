@@ -1,7 +1,8 @@
 Kotlin Coroutines have a complex cancellation and error handling system. Sometimes it's not obvious.  
 
 Top examples:  
-### Many people believe that the following code with `launch` will not crash because of `supervisorScope`
+
+Many people believe that the following code with `launch` will not crash because of `supervisorScope`
 ```
 supervisorScope {
     launch {
@@ -13,7 +14,7 @@ supervisorScope {
 
 ---
 
-### Or this code with `async` because the result is never awaited
+Or this code with `async` because the result is never awaited
 ```
 coroutineScope {
     async {
@@ -25,7 +26,7 @@ coroutineScope {
 
 ---
 
-### Use `runCatching` or simple `try/catch` for suspendable code
+Use `runCatching` or simple `try/catch` for suspendable code
 ```
 launch {
     runCatching {
