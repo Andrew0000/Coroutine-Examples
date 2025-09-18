@@ -2,10 +2,12 @@ package com.coroutineexamples
 
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
 import java.lang.Exception
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -47,6 +49,40 @@ class CancellationTest {
         job.cancelAndJoin()
         assertEquals(
             listOf(),
+            result
+        )
+    }
+
+    @Test
+    fun `When cancel runCatching - coroutine continues`() = runTest {
+        val result = mutableListOf<Int>()
+        val job = launch {
+            runCatching {
+                delay(100)
+            }
+            result += 1
+        }
+        delay(50)
+        job.cancelAndJoin()
+        assertEquals(
+            listOf(1),
+            result
+        )
+    }
+
+    @Test
+    fun `When cancel NonCancellable - coroutine continues`() = runTest {
+        val result = mutableListOf<Int>()
+        val job = launch {
+            withContext(NonCancellable) {
+                delay(100)
+                result += 1
+            }
+        }
+        delay(50)
+        job.cancelAndJoin()
+        assertEquals(
+            listOf(1),
             result
         )
     }
