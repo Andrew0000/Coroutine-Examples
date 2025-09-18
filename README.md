@@ -14,7 +14,7 @@ supervisorScope {
 
 ---
 
-Or this code with `async` because the result is never awaited
+Or this code with `async` is safe because the result is never awaited
 ```
 coroutineScope {
     async {
