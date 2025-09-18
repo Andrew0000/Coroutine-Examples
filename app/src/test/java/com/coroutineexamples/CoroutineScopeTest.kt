@@ -1,5 +1,6 @@
 package com.coroutineexamples
 
+import com.coroutineexamples.utils.TheSampleException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
